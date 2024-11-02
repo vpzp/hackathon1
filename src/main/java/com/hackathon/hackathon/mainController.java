@@ -19,7 +19,7 @@ public class mainController {
         List<Air> airList = airService.getAllAirList();
         model.addAllAttributes(airList);
 
-        return "";
+        return "mainpage";
     }
 
 }
