@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface AirRepository extends JpaRepository<Air, Long > {
     Optional<Air> findByDateAndAndStationName(String date, String stationName);
 
+    List<Air> findBySidoNameAndDate(String sidoName, String date);
+
     List<Air> findAll();
 }

@@ -23,6 +23,10 @@ public class Air {
 
     private int pm10Value;
 
+    private String pm25Value;
+
+    private String o3Value;
+
     private String informGrade;
 
 //    구 이름
@@ -30,4 +34,10 @@ public class Air {
 
 //    자치도 이름
     private String sidoName;
+
+    //강수확률
+    private int rainValue;
+
+//    온도
+    private String temperature;
 }
