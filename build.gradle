@@ -38,6 +38,8 @@ dependencies {
 	testImplementation 'org.projectlombok:lombok:1.18.26'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.json:json:20210307'
+
 }
 
 tasks.named('test') {

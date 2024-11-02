@@ -19,9 +19,15 @@ public class Air {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime date;
+    private String date;
 
     private int pm10Value;
 
     private String informGrade;
+
+//    구 이름
+    private String stationName;
+
+//    자치도 이름
+    private String sidoName;
 }
