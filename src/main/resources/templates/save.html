@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .signup-container {
+            background-color: white;
+            padding: 60px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 400px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 20px;
+            font-size: 16px;
+            display: none; /* 기본적으로 숨김 */
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            width: 80px; /* 레이블의 고정 너비 */
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="password"],
+        .combobox,
+        .number {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            width: calc(100% - 100px); /* 레이블을 제외한 너비 */
+        }
+
+        input[type="radio"] {
+            margin: 10px;
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: calc(100% - 100px); /* 레이블 제외한 너비 */
+        }
+
+        .toggle-password {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .combobox,
+        .number {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="signup-container">
+    <h1>회원가입</h1>
+    <!-- 비밀번호 불일치 경고 메시지 -->
+    <div id="passwordError" class="error-message">비밀번호가 일치하지 않습니다.</div>
+
+    <form action="/user/save" method="post" onsubmit="return validatePasswords()">
+        
+        <div class="input-group">
+            <label for="memberName">이름</label>
+            <input type="text" id="memberName" name="memberName" placeholder="이름" required>
+        </div>
+
+        <div class="input-group">
+            <label for="memberEmail">아이디</label>
+            <input type="text" id="memberEmail" name="memberEmail" placeholder="아이디" required>
+        </div>
+
+        <div class="input-group">
+            <label for="memberPassword">비밀번호</label>
+            <div class="password-container">
+                <input type="password" id="memberPassword" name="memberPassword" placeholder="비밀번호" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('memberPassword', this)">
+                    🙈
+                </span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="confirmPassword">비밀번호 확인</label>
+            <div class="password-container">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호 재입력" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)">
+                    🙈
+                </span>
+            </div>
+        </div>
+
+        <label><input type="radio" name="personality" value="내향인" required> 내향인</label>
+        <label><input type="radio" name="personality" value="외향인" required> 외향인</label> <br>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <select class="combobox" name="region" required style="width: 48%;">
+                <option value="" disabled selected>지역 선택</option>
+                <option value="서울">서울</option>
+                <option value="부산">부산</option>
+                <option value="대구">대구</option>
+                <option value="인천">인천</option>
+                <option value="광주">광주</option>
+                <option value="대전">대전</option>
+                <option value="울산">울산</option>
+                <option value="경기">경기</option>
+                <option value="강원">강원</option>
+                <option value="충북">충북</option>
+                <option value="충남">충남</option>
+                <option value="전북">전북</option>
+                <option value="전남">전남</option>
+                <option value="경북">경북</option>
+                <option value="경남">경남</option>
+                <option value="제주">제주</option>
+                <option value="세종">세종</option>
+            </select>
+            <input class="number" type="number" name="age" placeholder="나이, 예시:24" required style="width: 48%;">
+        </div>
+        <br>
+        <div class="input-group">
+            <label for="additionalInfo">추가사항</label>
+            <input type="text" id="additionalInfo" name="additionalInfo" placeholder="예) 노래를 좋아하고, 산책을 좋아해요" required>
+        </div>
+
+        <input type="submit" value="회원가입">
+    </form>
+</div>
+
+<!-- 패스워드 토글 및 확인 스크립트 -->
+<script>
+    // 비밀번호 가시성 토글 함수
+    function togglePasswordVisibility(fieldId, icon) {
+        const passwordInput = document.getElementById(fieldId);
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.textContent = "👁️";
+        } else {
+            passwordInput.type = "password";
+            icon.textContent = "🙈";
+        }
+    }
+
+    // 비밀번호 확인 함수
+    function validatePasswords() {
+        const password = document.getElementById("memberPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const passwordError = document.getElementById("passwordError");
+
+        if (password !== confirmPassword) {
+            passwordError.style.display = "block"; // 경고 메시지 표시
+            return false; // 폼 제출 중지
+        } else {
+            passwordError.style.display = "none"; // 경고 메시지 숨김
+            return true; // 폼 제출 허용
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Accessors(chain = true)
-public class Air {
+    public class Air {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

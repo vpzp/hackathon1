@@ -1,11 +1,13 @@
 package com.hackathon.hackathon;
 
 import com.hackathon.hackathon.air.AirService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
+@Slf4j
 @SpringBootTest
 class AirApiTest {
     @Autowired
@@ -19,9 +21,11 @@ class AirApiTest {
         String[] nx ={"60", "98","89","55","58", "67", "102", "60", "73", "69", "68", "63","51", "87", "91", "52", "66"};
         String[] ny ={"127", "76","90", "124","74", "100", "84", "120", "134", "107","100",  "89","67", "106", "77", "38", "103"};
         for (int i = 0; i < date.length; i++) {
-            airService.getAirData(date[i]);
+            airService.getAirData("2024-11-03");
+
+            System.out.println("날짜시각은 = " + date[i]);
         }
-        airService.getWeatherData(date[4], nx, ny);
+        airService.getWeatherData("2024-11-03", nx, ny);
 
     }
 }

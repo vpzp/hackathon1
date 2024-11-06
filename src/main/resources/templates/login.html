@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 60px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 400px; /* 컨테이너 너비를 넓게 설정 */
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em; /* 제목을 더 크게 */
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 18px; /* 입력 필드 텍스트 크기 증가 */
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px; /* 버튼 크기 증가 */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            color: #666;
+            font-size: 16px;
+            margin-top: 30px;
+        }
+
+        .message a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .message a:hover {
+            text-decoration: underline;
+        }
+        /* 홈 버튼 스타일 추가 */
+        .home-button {
+            display: block;
+            width: 50px; /* 이미지 크기 설정 */
+            margin: 20px auto; /* 중앙 정렬 */
+            position: absolute; /* 상단 고정 */
+            top: 20px;
+            left: 20px;
+        }
+
+        .home-button img {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+    </style>
+
+<body>
+<div class="login-container">
+    <h1>로그인</h1>
+    <form th:action="@{/user/login}" method="post">
+        <input type="text" name="username" id="username" placeholder="아이디" required> <br>
+        <input type="password" name="password" id ="password" placeholder="비밀번호" required><br>
+        <input type="submit" value="로그인">
+    </form>
+    <div class="message">
+        <p>계정이 없으신가요? <a href="/user/save">회원가입</a></p>
+    </div>
+</div>
+</head>
+</body>
+</html>

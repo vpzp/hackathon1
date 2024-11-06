@@ -1,0 +1,287 @@
+  <!DOCTYPE html>
+  <html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공기 질 모니터링 대시보드</title>
+    <style>
+      /* 기본 스타일 초기화 */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #E0F7FA;
+      }
+      /* 전체 컨테이너 */
+      .container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      /* topbar */
+      .topbar {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+        background-color: #607D8B;
+        color: white;
+      }
+      /* dashboard */
+      .dashboard {
+        flex: 9;
+        display: grid;
+        grid-template-columns: 2fr 2fr;
+        gap: 20px;
+        padding: 40px;
+        background-color: #E8F5E9;
+        border-radius: 12px;
+        height: calc(100vh - 80px);
+        box-sizing: border-box;
+        position: relative;
+      }
+      /* 지도 컨테이너 스타일 조정 */
+      .map-container1 {
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #CFD8DC;
+        box-sizing: border-box;
+        position: relative;
+      }
+      /* 지도 왼쪽 위 범례 스타일 */
+      #legend {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+        font-size: 14px;
+        color: #37474F;
+        z-index: 10000;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 5px;
+      }
+      .legend-color {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+      }
+      /* 추천 섹션 스타일 */
+      .recommendations {
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        height: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      .recommendations h2 {
+        font-size: 2rem; /* 제목 크기 증가 */
+        color: #37474F;
+        margin-bottom: 15px;
+        margin-top: 20px; /* 추천 놀거리 제목을 아래로 내리기 */
+        border-bottom: 2px solid #607D8B;
+        padding-bottom: 8px;
+      }
+      #recommended-activities {
+        margin-top: 20px; /* 추천 놀거리 리스트를 아래로 내리기 */
+      }
+      .recommendations ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: calc(100% - 190px); /* 여백을 100px로 줄이기 */
+        overflow-y: auto;
+      }
+      .recommendations ul li {
+        display: flex;
+        align-items: flex-start;
+        background-color: #E8F5E9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        color: #607D8B;
+      }
+      .recommendations ul li img {
+        width: 130px; /* 이미지 크기 확대 */
+        height: 130px;
+        border-radius: 8px;
+        margin-right: 15px;
+      }
+      .recommendations ul li .content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      .recommendations ul li .name {
+        font-weight: bold;
+        font-size: 1.4rem; /* 이름 글씨 크기 증가 */
+        color: #37474F;
+      }
+      .recommendations ul li .description {
+        font-size: 1.2rem; /* 설명 글씨 크기 증가 */
+        color: #607D8B;
+        margin-top: 10px;
+      }
+      .recommendations ul li .location {
+        font-size: 1.1rem; /* 위치 글씨 크기 증가 */
+        color: #455A64;
+        margin-top: 6px;
+      }
+    </style>
+
+
+
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=0ddbe6e883bed9490fd3749f409c3383"></script>
+  </head>
+  <body>
+  <div class="container">
+    <!-- topbar 시작 -->
+    <div class="topbar">
+      <h1 style="font-size: 28px; font-weight: bold; color: white;">AirCheck</h1>
+    </div> <!-- topbar 끝 -->
+
+    <!-- dashboard 시작 -->
+    <div class="dashboard">
+      <div class="map-container1" id="map">
+        <!-- 범례 추가 -->
+        <div id="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: #00E400;"></div> 좋음 (0-30)
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: #FFD700;"></div> 보통 (31-80)
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: #FF7E00;"></div> 나쁨 (81-150)
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: #FF0000;"></div> 매우 나쁨 (151+)
+          </div>
+        </div>
+      </div>
+      <!-- 추천 섹션 -->
+      <div class="recommendations">
+        <h2>행동 요령</h2>
+        <p id="safety-instructions" style="font-size: 1.5rem;"><strong>AIRCHECK</strong>공기가 상쾌합니다.</p>
+        <h2>추천 놀거리</h2>
+        <ul id="recommended-activities">
+          <!-- 타임리프 문법으로 추천 활동 동적 생성 -->
+          <li th:each="entry : ${locationsMap}">
+            <div class="content">
+              <div class="name" th:text="${entry.key}"></div>
+              <p class="description" th:text="${entry.value.get('내용')}"></p>
+              <p class="location" th:text="'위치: ' + ${entry.value.get('위치')}"></p>
+            </div>
+          </li>
+        </ul>
+      </div> <!-- 추천 섹션 끝 -->
+    </div> <!-- dashboard 끝 -->
+  </div>
+
+    <script>
+      // 카카오맵을 표시할 div 요소를 가져옴
+      var mapContainer = document.getElementById('map');
+      var mapOption = {
+        center: new kakao.maps.LatLng(36.5, 127.7669), // 남한 중심을 위로 조금 이동
+        level: 12 // 확대 레벨 설정
+      };
+
+      // 지도 생성
+      var map = new kakao.maps.Map(mapContainer, mapOption);
+
+
+      // 도시 좌표와 미세먼지 농도 설정
+      var cities = [
+        { lat: 37.5665, lng: 126.9780, aqi: 20 },   // 서울
+        { lat: 35.1796, lng: 129.0756, aqi: 27 },   // 부산
+        { lat: 35.8722, lng: 128.6014, aqi: 25 },  // 대구
+        { lat: 37.4563, lng: 126.7052, aqi: 31 },  // 인천
+        { lat: 35.1595, lng: 126.8526, aqi: 12 },   // 광주
+        { lat: 36.351,  lng: 127.3850, aqi: 27 },    // 대전
+        { lat: 35.5384, lng: 129.3114, aqi: 35 },  // 울산
+        { lat: 37.2635, lng: 127.0286, aqi: 27 },   // 경기
+        { lat: 37.5550, lng: 128.2093, aqi: 25 },   // 강원
+        { lat: 36.6285, lng: 127.9290, aqi: 13 },  // 충북
+        { lat: 36.5184, lng: 126.8000, aqi: 33 },   // 충남
+        { lat: 35.7175, lng: 127.1530, aqi: 28 },   // 전북
+        { lat: 34.8679, lng: 126.9910, aqi: 11 },  // 전남
+        { lat: 36.4919, lng: 128.8889, aqi: 9 },  // 경북
+        { lat: 35.4606, lng: 128.2132, aqi: 22 },   // 경남
+        { lat: 33.4890, lng: 126.4983, aqi: 25 },  // 제주
+        { lat: 36.4800, lng: 127.2890, aqi: 24 },    // 세종
+        { lat: 36.3624, lng: 127.3568, aqi: 40, showOnZoom: 9 }  // 유성구 (줌 레벨 10에서 나타남)
+      ];
+
+      // 특정 줌 레벨에서 표시할 마커 설정
+      var zoomLevel = 9; // 마커가 나타나는 기준 줌 레벨
+      var mapContainer = document.getElementById('map');
+      var mapOption = {
+        center: new kakao.maps.LatLng(36.5, 127.7669), // 남한 중심을 위로 조금 이동
+        level: 12 // 초기 확대 레벨 설정
+      };
+
+      // 지도 생성
+      var map = new kakao.maps.Map(mapContainer, mapOption);
+
+      // 각 도시에 마커 추가
+      cities.forEach(city => {
+        // 미세먼지 값에 따라 마커 색상을 설정
+        let markerColor;
+        if (city.aqi <= 30) {
+          markerColor = "#00E400"; // 좋음
+        } else if (city.aqi <= 80) {
+          markerColor = "#FFD700"; // 보통
+        } else if (city.aqi <= 150) {
+          markerColor = "#FF7E00"; // 나쁨
+        } else {
+          markerColor = "#FF0000"; // 매우 나쁨
+        }
+
+        // 마커 생성 함수
+        function createMarker(city) {
+          var content = `<div style="background-color:${markerColor}; color: white;
+                     border-radius: 50%; width: 30px; height: 30px; display: flex;
+                     align-items: center; justify-content: center; font-weight: bold;">
+                     ${city.aqi}</div>`;
+
+          return new kakao.maps.CustomOverlay({
+            position: new kakao.maps.LatLng(city.lat, city.lng),
+            content: content,
+            yAnchor: 1
+          });
+        }
+
+        // 기본 마커 생성
+        var marker = createMarker(city);
+
+        // 유성구는 특정 줌 레벨에서만 표시되도록 설정
+        if (city.showOnZoom && city.showOnZoom === zoomLevel) {
+          // 줌 변경 이벤트 추가
+          kakao.maps.event.addListener(map, 'zoom_changed', function() {
+            let currentZoom = map.getLevel();
+            if (currentZoom <= zoomLevel) {
+              marker.setMap(map); // 줌 인하면 마커 표시
+            } else {
+              marker.setMap(null); // 줌 아웃하면 마커 제거
+            }
+          });
+        } else {
+          marker.setMap(map); // 다른 도시는 항상 표시
+        }
+      });
+
+
+    </script>
+
+  </body>
+  </html>
